@@ -125,6 +125,7 @@ public enum BuildingType {
 
 	public final String name;
 	public final String shortName;
+	private int level = 1; // current level of the building | levels are 1, 2, 3
 	private Consumption foodConsumption; // food consumption of the building
 	private ConstructionNeeds constructionNeeds; // needs for construction
 	private int workersNeeded; // min number of workers

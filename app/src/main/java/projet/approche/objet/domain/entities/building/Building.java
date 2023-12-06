@@ -22,7 +22,6 @@ public class Building implements BuildingItf {
 	private int time = 0; // time since last production / time since construction started
 	private int inhabitants = 0; // current number of inhabitants in the building
 	private int workers = 0; // current number of workers in the building
-	private int level = 1; // current level of the building | levels are 1, 2, 3
 
 	public int getInhabitants() {
 		return inhabitants;
@@ -127,7 +126,7 @@ public class Building implements BuildingItf {
 	}
 
 	public boolean canUpgrade(ResourceList inventory) {
-		if (this.level < 3) {
+		if (this.type.level < 3) {
 			//
 			ResourceList missingResources = this.type.getConstructionNeeds().getMissingResources(inventory);
 			// returns the missing resources and how much is lacking for the next upgrade
