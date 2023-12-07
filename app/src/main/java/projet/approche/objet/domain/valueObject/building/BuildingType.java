@@ -11,6 +11,7 @@ import java.util.List;
 public enum BuildingType {
 	WOODENCABIN("Wooden Cabin",
 			"WC",
+			1,
 			new Consumption(1, List.of(new Resource(FOOD, 2))),
 			new ConstructionNeeds(2, 1, List.of(new Resource(WOOD, 1))),
 			2,
@@ -21,6 +22,7 @@ public enum BuildingType {
 					new Resource(FOOD, 2)))),
 	HOUSE("House",
 			"H",
+			1,
 			new Consumption(1, List.of(new Resource(FOOD, 4))),
 			new ConstructionNeeds(4, 1,
 					List.of(
@@ -32,6 +34,7 @@ public enum BuildingType {
 			new Production(1)),
 	APARTMENTBUILDING("Apartment Building",
 			"A",
+			1,
 			new Consumption(1, List.of(new Resource(FOOD, 60))),
 			new ConstructionNeeds(6,
 					4, List.of(
@@ -43,6 +46,7 @@ public enum BuildingType {
 			new Production(1)),
 	FARM("Farm",
 			"F",
+			1,
 			new Consumption(1, List.of(new Resource(FOOD, 5))),
 			new ConstructionNeeds(2,
 					4, List.of(
@@ -55,6 +59,7 @@ public enum BuildingType {
 					new Resource(FOOD, 10)))),
 	QUARRY("Quarry",
 			"Q",
+			1,
 			new Consumption(1, List.of(new Resource(FOOD, 2))),
 			new ConstructionNeeds(2,
 					4, List.of(
@@ -69,6 +74,7 @@ public enum BuildingType {
 					new Resource(GOLD, 2)))),
 	LUMBERMILL("Lumber Mill",
 			"L",
+			1,
 			new Consumption(1),
 			new ConstructionNeeds(4,
 					6, List.of(
@@ -82,6 +88,7 @@ public enum BuildingType {
 					new Resource(LUMBER, 4)))),
 	CEMENTPLANT("Cement Plant",
 			"C",
+			1,
 			new Consumption(1),
 			new ConstructionNeeds(4,
 					6, List.of(
@@ -96,6 +103,7 @@ public enum BuildingType {
 					new Resource(CEMENT, 4)))),
 	STEELMILL("Steel Mill",
 			"S",
+			1,
 			new Consumption(1),
 			new ConstructionNeeds(6,
 					6, List.of(
@@ -109,7 +117,8 @@ public enum BuildingType {
 			new Production(1, List.of(
 					new Resource(STEEL, 4)))),
 	TOOLFACTORY("Tool Factory",
-			"T",
+			"T", 
+			1,
 			new Consumption(1),
 			new ConstructionNeeds(8,
 					8, List.of(
@@ -126,20 +135,21 @@ public enum BuildingType {
 	public final String name;
 	public final String shortName;
 	private int level = 1; // current level of the building | levels are 1, 2, 3
-	private Consumption foodConsumption; // food consumption of the building
-	private ConstructionNeeds constructionNeeds; // needs for construction
-	private int workersNeeded; // min number of workers
-	private int workersMax; // max number of workers
-	private int inhabitantsNeeded; // min number of inhabitants
-	private int inhabitantsMax; // max number of inhabitants
-	private Consumption consumption;
-	private Production production;
+	private final Consumption foodConsumption; // food consumption of the building
+	private final ConstructionNeeds constructionNeeds; // needs for construction
+	private final int workersNeeded; // min number of workers
+	private final int workersMax; // max number of workers
+	private final int inhabitantsNeeded; // min number of inhabitants
+	private final int inhabitantsMax; // max number of inhabitants
+	private final Consumption consumption;
+	private final Production production;
 
-	private BuildingType(String name, String shortName, Consumption foodConsumption,
+	private BuildingType(String name, String shortName, int level,Consumption foodConsumption,
 			ConstructionNeeds constructionNeeds, int workersNeeded,
 			int inhabitantsNeeded, Consumption consumption, Production production) {
 		this.name = name;
 		this.shortName = shortName;
+		this.level = level;
 		this.foodConsumption = foodConsumption;
 		this.constructionNeeds = constructionNeeds;
 		this.workersNeeded = workersNeeded;
@@ -162,10 +172,6 @@ public enum BuildingType {
 		return workersMax;
 	}
 
-	public int setWorkersMax(int workersMax) {
-		return this.workersMax = workersMax;
-	}
-
 	public int getInhabitantsNeeded() {
 		return inhabitantsNeeded;
 	}
@@ -174,8 +180,8 @@ public enum BuildingType {
 		return inhabitantsMax;
 	}
 
-	public int setInhabitantsMax(int inhabitantsMax) {
-		return this.inhabitantsMax = inhabitantsMax;
+	public int getLevel() {
+		return level;
 	}
 
 	public Consumption getFoodConsumption() {
@@ -188,22 +194,6 @@ public enum BuildingType {
 
 	public Production getProduction() {
 		return production;
-	}
-
-	public void setConstructionNeeds(ConstructionNeeds constructionNeeds) {
-		this.constructionNeeds = constructionNeeds;
-	}
-
-	public void setFoodConsumtion(Consumption foodConsumption) {
-		this.foodConsumption = foodConsumption;
-	}
-
-	public void setConsumption(Consumption consumption) {
-		this.consumption = consumption;
-	}
-
-	public void setProduction(Production production) {
-		this.production = production;
 	}
 
 	public static BuildingType fromString(String name) {

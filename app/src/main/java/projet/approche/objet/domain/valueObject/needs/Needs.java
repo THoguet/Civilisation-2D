@@ -128,15 +128,8 @@ public class Needs {
 		return remainingResources;
 	}
 
-	/*
-	 * Multiply the amount of each resource. Increased production and consumption
-	 */
-	public ResourceList multiplyResourceList(float multiplier) {
-		ResourceList multipliedResources = new ResourceList();
-		for (Resource resource : this.resources) {
-			multipliedResources = multipliedResources.add(new Resource(resource.type, resource.amount.mul(multiplier)));
-		}
-		return multipliedResources;
+	public int getTime() {
+		return this.time;
 	}
 
 	@Override

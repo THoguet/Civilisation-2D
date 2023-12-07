@@ -172,6 +172,17 @@ public class ResourceList implements Iterable<Resource> {
 		return null;
 	}
 
+	/*
+	 * Multiply the amount of each resource. Increased production and consumption
+	 */
+	public ResourceList multiplyResourceList(float multiplier) {
+		ResourceList multipliedResources = new ResourceList();
+		for (Resource resource : this.resources) {
+			multipliedResources = multipliedResources.add(new Resource(resource.type, resource.amount.mul(multiplier)));
+		}
+		return multipliedResources;
+	}
+
 	@Override
 	public Iterator<Resource> iterator() {
 		return this.resources.iterator();
