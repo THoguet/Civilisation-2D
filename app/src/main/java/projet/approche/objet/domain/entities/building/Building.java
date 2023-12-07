@@ -8,7 +8,9 @@ import projet.approche.objet.domain.valueObject.needs.Needs;
 import projet.approche.objet.domain.valueObject.needs.Production;
 import projet.approche.objet.domain.valueObject.needs.Consumption;
 import projet.approche.objet.domain.valueObject.resource.Resource;
+import projet.approche.objet.domain.valueObject.resource.ResourceAmount;
 import projet.approche.objet.domain.valueObject.resource.ResourceList;
+import projet.approche.objet.domain.valueObject.resource.ResourceType;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -27,6 +29,11 @@ public class Building implements BuildingItf {
 	private ConstructionNeeds initConstructionNeeds ;
 	private Production initProduction;
 	private Consumption initConsumption;
+
+	private ConstructionNeeds curConstructionNeeds ;
+	private Production curProduction;
+	private Consumption curConsumption;
+	private Resource foodConsumption;
 
 	private int pTime; // increase in production time for next upgrade
 
@@ -122,10 +129,14 @@ public class Building implements BuildingItf {
 	}
 
 	public void addInhabitantToBuilding(int inhabitantsAdd) {
+		// check if the building is not Lumbermill, Cementplant,Steelmill, Tool factory
+		// otherwise throw an exception
 		this.inhabitants += inhabitantsAdd;
 	}
 
 	public void addWorkerToBuilding(int workersAdd) {
+		// check if the building is not a House or Apartment building
+		// otherwise throw an exception
 		this.workers += workersAdd;
 	}
 
@@ -144,11 +155,14 @@ public class Building implements BuildingItf {
 	public int getTimeToBuild() {
 		return this.type.getConstructionNeeds().time;
 	}
+
+	public ConstructionNeeds getInitConstructionNeeds() {
+		return this.initConstructionNeeds;
+	}
 	
 	public ConstructionNeeds getConstructionNeeds() {
 		// Increase in construction time for next upgrade
 		// as well as increase in gold amount and resources needed
-
 		List<Resource> resources = new ArrayList<>();
 		ResourceList copyResources = this.initConstructionNeeds.resources;
 		resources = copyResources.multiplyResourceList(this.getLevel()+1).getResources();
@@ -167,8 +181,13 @@ public class Building implements BuildingItf {
 	public Consumption getConsumption() {
 		List<Resource> resources = new ArrayList<>();
 		ResourceList copyResources = this.initConsumption.resources;
-		resources = copyResources.multiplyResourceList(this.getLevel()).getResources();
+		resources = copyResources.multiplyResourceList(this.getLevel()+1).getResources();
 		return new Consumption(this.initConsumption.time, resources);
+	}
+
+	public Resource buildingFoodConsumption() {
+		int foodNeeded = this.inhabitants + this.workers;
+		return new Resource(ResourceType.FOOD, new ResourceAmount(foodNeeded));
 	}
 
 	public boolean canUpgrade(ResourceList inventory) {
@@ -183,29 +202,21 @@ public class Building implements BuildingItf {
 			}
 
 			// increase construction time for next upgrade
+			// if a building is being upgraded we assume that the new inhabs + workers 
+			// are added as well
 			if (this.type.getConstructionNeeds().isAffordable(inventory)) {
 				if (!this.type.equals(BuildingType.HOUSE) || !this.type.equals(BuildingType.APARTMENTBUILDING)) {
 					// increase workers slowly
 					// produce more with less workers
 					this.addWorkerToBuilding(1);
-					// this.type.setWorkersMax(this.type.getWorkersMax() * 2);
-
-					// increase production
-					// produce double the resources in the same amount of time
-					// multiplier will always be 2
-					// Production newProduction = new Production(this.type.getProduction().time,
-
-					// this.type.setProduction(newProduction);
+					this.curProduction = getProduction();
 				}
 
 				// increase consumption
 				if (this.type.equals(BuildingType.LUMBERMILL) || this.type.equals(BuildingType.CEMENTPLANT)
 						|| this.type.equals(BuildingType.STEELMILL) || this.type.equals(BuildingType.TOOLFACTORY)) {
 					//
-					// Consumption newConsumption = new Consumption(this.type.getConsumption().time,
-					// this.type.getConsumption().multiplyResourceList(2));
-
-					// this.type.setConsumption(newConsumption);
+					this.curConsumption = getConsumption();
 				} else {
 					// double the number of inhabs with each upgrade
 					this.addInhabitantToBuilding(this.getInhabitants());
@@ -213,6 +224,8 @@ public class Building implements BuildingItf {
 					// this.type.setInhabitantsMax(this.type.getInhabitantsMax() * 2);
 					// increase food consumption of the building
 					// TODO: only consume food if there are inhabitants + workers
+					Resource foodConsumption = this.buildingFoodConsumption();
+
 
 					// food consumption is multiplied by 2 since the number of inhabs doubled
 					// Consumption newFoodConsumption = new

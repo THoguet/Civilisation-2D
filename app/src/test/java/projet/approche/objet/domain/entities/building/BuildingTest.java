@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import projet.approche.objet.domain.valueObject.building.BuildingType;
 import projet.approche.objet.domain.valueObject.building.exceptions.BuildingAlreadyStartedException;
 import projet.approche.objet.domain.valueObject.building.exceptions.NotEnoughNeedsException;
+import projet.approche.objet.domain.valueObject.needs.ConstructionNeeds;
 import projet.approche.objet.domain.valueObject.resource.Resource;
 import projet.approche.objet.domain.valueObject.resource.ResourceList;
 import projet.approche.objet.domain.valueObject.resource.ResourceType;
@@ -149,6 +150,17 @@ class BuildingTest {
 		building.addWorkerToBuilding(5);
 		building.addWorkerToBuilding(-2);
 		assertEquals(3, building.getWorkers());
+	}
+
+	@Test
+	void testgetConstructionNeeds(){
+		BuildingType type = BuildingType.fromString("Wooden Cabin");
+		Building building = new Building(type, 1);
+
+		ConstructionNeeds iCNeeds = building.getInitConstructionNeeds();
+
+		ConstructionNeeds cNeeds = building.getConstructionNeeds();
+		assertFalse(iCNeeds.equals(cNeeds));
 	}
 
 	@Disabled
