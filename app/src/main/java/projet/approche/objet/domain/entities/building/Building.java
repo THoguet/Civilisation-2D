@@ -184,7 +184,7 @@ public class Building implements BuildingItf {
 		ResourceList copyResources = this.initConstructionNeeds.resources;
 		resources = copyResources.multiplyResourceList(this.getLevel()+1).getResources();
 		// put 0 for the goldAmount because it will be multiplied in the above line
-		return new ConstructionNeeds(this.initConstructionNeeds.time * (this.type.getLevel()+1), 
+		return new ConstructionNeeds(this.initConstructionNeeds.time * (this.getLevel()+1), 
 			0, resources);
 	}
 
