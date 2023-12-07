@@ -9,6 +9,8 @@ import projet.approche.objet.domain.valueObject.building.BuildingType;
 import projet.approche.objet.domain.valueObject.building.exceptions.BuildingAlreadyStartedException;
 import projet.approche.objet.domain.valueObject.building.exceptions.NotEnoughNeedsException;
 import projet.approche.objet.domain.valueObject.needs.ConstructionNeeds;
+import projet.approche.objet.domain.valueObject.needs.Consumption;
+import projet.approche.objet.domain.valueObject.needs.Production;
 import projet.approche.objet.domain.valueObject.resource.Resource;
 import projet.approche.objet.domain.valueObject.resource.ResourceAmount;
 import projet.approche.objet.domain.valueObject.resource.ResourceList;
@@ -161,10 +163,49 @@ class BuildingTest {
 		Building building = new Building(type, 1);
 
 		ConstructionNeeds iCNeeds = building.getInitConstructionNeeds();
+		Resource gold = new Resource(ResourceType.GOLD, 2);
+		Resource wood = new Resource(ResourceType.WOOD, 2);
+
+		ConstructionNeeds tCopy = building.type.getConstructionNeeds();
 
 		ConstructionNeeds cNeeds = building.getConstructionNeeds(); // for next upgrade
-		assertFalse(iCNeeds.equals(cNeeds));
+		assertTrue(iCNeeds.equals(tCopy));
+		//assertTrue(tCopy.getResources().contains(gold));
+		//assertTrue(iCNeeds.getResources().contains(gold)); // 1 gold
+		//assertTrue(building.getLevel() == 1); //
+		assertTrue(cNeeds.resources.contains(gold));
+		// contains 4 gold instead of 2 
 	}
+
+	@Test
+	void testgetProduction(){
+		BuildingType type = BuildingType.fromString("Wooden Cabin");
+		Building building = new Building(type, 1);
+
+		Production iPNeeds = building.getIniProduction();
+		Resource gold = new Resource(ResourceType.GOLD, 2);
+		Resource wood = new Resource(ResourceType.WOOD, 4);
+
+		Production tCopy = building.type.getProduction();
+
+		Production pNeeds = building.getProduction(); // for next upgrade
+		assertTrue(iPNeeds.equals(tCopy));
+		assertEquals(pNeeds.getTime(),1);
+		assertEquals(building.getLevel(),1);
+		assertTrue(pNeeds.resources.contains(wood));
+	}
+
+	@Disabled
+	@Test
+	void testgetConsumption(){
+		BuildingType type = BuildingType.fromString("Wooden Cabin");
+		Building building = new Building(type, 1);
+
+		Consumption iCNeeds = building.getInitConsumption();
+
+		
+	}
+
 
 	//@Disabled
 	@Test
@@ -178,14 +219,31 @@ class BuildingTest {
 				new Resource(ResourceType.fromString("Stone"), 50),
 				new Resource(ResourceType.fromString("Gold"), 50)));
 
-		building.canUpgrade(inventory);
+		inventory = building.canUpgrade(inventory);
 
 		Building building2 = new Building(type, 1);
 
-		
+		//Resource gold = new Resource(ResourceType.GOLD, 50);
+		//assertTrue(building.getConstructionNeeds().getResources().contains(gold));
+		//assertTrue(inventory.contains(gold));
 
 		assertTrue(building.getLevel() == 2);
 		assertTrue(building2.getLevel() == 1);
+		// to upgrade WC level 1 to a WC level 2 you spend 2 Gold
+		assertTrue(inventory.getAmount(ResourceType.GOLD).value == 48);
+
+		// second level up
+		inventory = building.canUpgrade(inventory);
+		assertTrue(building.getLevel() == 3);
+		assertTrue(building2.getLevel() == 1);
+		// to upgrade WC level 2 to a WC level 3 you spend 3 Gold
+		assertTrue(inventory.getAmount(ResourceType.GOLD).value == 45);
+
+		//trying to level up again but cant
+		inventory = building.canUpgrade(inventory);
+		assertTrue(building.getLevel() == 3);
+		// inventory should be the same as previously
+		assertTrue(inventory.getAmount(ResourceType.GOLD).value == 45);
 	}
 
 	@Test
