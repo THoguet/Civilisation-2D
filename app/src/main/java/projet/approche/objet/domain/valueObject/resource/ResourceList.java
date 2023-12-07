@@ -171,6 +171,64 @@ public class ResourceList implements Iterable<Resource> {
 		}
 		return null;
 	}
+	public boolean isAffordable(ResourceList resources) {
+		int cpt = 0;
+		for (Resource resource : resources) {
+			for (Resource needs : this.resources) {
+				if (resource.type.equals(needs.type)) {
+					if (resource.amount.isLess(needs.amount))
+						return false;
+					else
+						cpt++;
+
+				}
+			}
+		}
+		if (cpt == this.resources.size())
+			return true;
+		return false;
+	}
+
+	/**
+	 * Gets the missing resources.
+	 *
+	 * @param resources the resources available
+	 * @return the missing resources
+	 */
+	public ResourceList getMissingResources(ResourceList resources) {
+		ResourceList missingResources = new ResourceList();
+		for (Resource needs : this.resources) {
+			for (Resource resource : resources) {
+				if (resource.type.equals(needs.type)) {
+					if (resource.amount.isLess(needs.amount))
+						missingResources = missingResources
+								.add(new Resource(needs.type, needs.amount.sub(resource.amount)));
+				}
+			}
+		}
+		return missingResources;
+	}
+
+	/**
+	 * Gets the remaining resources.
+	 *
+	 * @param resources the resources available
+	 * @return the remaining resources
+	 */
+	public ResourceList getRemainingResources(ResourceList resources) {
+		ResourceList remainingResources = new ResourceList();
+		for (Resource needs : this.resources) {
+			for (Resource resource : resources) {
+				if (resource.type.equals(needs.type)) {
+					if (resource.amount.isGreater(needs.amount))
+						remainingResources = remainingResources
+								.add(new Resource(needs.type, resource.amount.sub(needs.amount)));
+				}
+			}
+		}
+		return remainingResources;
+	}
+	
 
 	/*
 	 * Multiply the amount of each resource. Increased production and consumption

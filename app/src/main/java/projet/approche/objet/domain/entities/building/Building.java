@@ -19,7 +19,7 @@ public class Building implements BuildingItf {
 
 	public final long id;
 
-	public final BuildingType type;
+	private BuildingType type;
 	private boolean buildStarted;
 	private boolean isBuilt;
 	private int time = 0; // time since last production / time since construction started
@@ -57,6 +57,9 @@ public class Building implements BuildingItf {
 		this.initConsumption = buildingType.getConsumption();
 
 		this.pTime = this.initProduction.time;
+		this.curConstructionNeeds = this.initConstructionNeeds;
+		this.curProduction = this.initProduction;
+		this.curConsumption = this.initConsumption;
 	}
 
 	public boolean isBuildStarted() {
@@ -66,6 +69,23 @@ public class Building implements BuildingItf {
 	public boolean isBuilt() {
 		return isBuilt;
 	}
+
+	public int getConstructionCost() {
+		return this.type.getConstructionCost();
+	}
+
+	public ResourceList ggetConstructionNeeds() {
+		return this.type.getConstructionNeeds().getResources().multiplyResourceList(this.getLevel()+1);
+	}
+
+	public ResourceList ggetProduction() {
+		return this.type.getProduction().getResources().multiplyResourceList(this.getLevel()+1);
+	}
+
+	public ResourceList ggetConsumption() {
+		return this.type.getConsumption().getResources().multiplyResourceList(this.getLevel());
+	}
+
 
 	/**
 	 * Updates the building. If the building is built, it will produce and consume
@@ -204,9 +224,14 @@ public class Building implements BuildingItf {
 	}
 
 	public ResourceList canUpgrade(ResourceList inventory) {
+		// TODO: after the update gain the resources from production instantly ?
+		// save changes to prod and cons in cur values to be used in update
+
 		if (this.getLevel() < 3) {
 			//
-			ResourceList missingResources = this.getConstructionNeeds().getMissingResources(inventory);
+			//ResourceList missingResources = this.getConstructionNeeds().getMissingResources(inventory);
+			// V2 TO's way
+			ResourceList missingResources = this.ggetConstructionNeeds().getMissingResources(inventory);
 			// returns the missing resources and how much is lacking for the next upgrade
 			// technically an upgrade consumes resources so use getRemainingResources
 			if (!missingResources.isEmpty()) {
@@ -217,7 +242,7 @@ public class Building implements BuildingItf {
 			// increase construction time for next upgrade
 			// if a building is being upgraded we assume that the new inhabs + workers 
 			// are added as well
-			if (this.getConstructionNeeds().isAffordable(inventory)) {
+			if (this.ggetConstructionNeeds().isAffordable(inventory)) {
 				if (!this.type.equals(BuildingType.HOUSE) || !this.type.equals(BuildingType.APARTMENTBUILDING)) {
 					// increase workers slowly
 					// produce more with less workers

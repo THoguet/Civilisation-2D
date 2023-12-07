@@ -9,6 +9,7 @@ import static projet.approche.objet.domain.valueObject.resource.ResourceType.*;
 import java.util.List;
 
 public enum BuildingType {
+	//TODO: refractor -> remove new Consumption(1, List.of(new Resource(FOOD, _))) in all buildings
 	WOODENCABIN("Wooden Cabin",
 			"WC",
 			1,
@@ -162,6 +163,10 @@ public enum BuildingType {
 
 	public ConstructionNeeds getConstructionNeeds() {
 		return constructionNeeds;
+	}
+
+	public int getConstructionCost() {
+		return constructionNeeds.goldAmountForConstruction;
 	}
 
 	public int getWorkersNeeded() {
