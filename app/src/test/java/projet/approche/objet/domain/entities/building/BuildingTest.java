@@ -10,6 +10,7 @@ import projet.approche.objet.domain.valueObject.building.exceptions.BuildingAlre
 import projet.approche.objet.domain.valueObject.building.exceptions.NotEnoughNeedsException;
 import projet.approche.objet.domain.valueObject.needs.ConstructionNeeds;
 import projet.approche.objet.domain.valueObject.resource.Resource;
+import projet.approche.objet.domain.valueObject.resource.ResourceAmount;
 import projet.approche.objet.domain.valueObject.resource.ResourceList;
 import projet.approche.objet.domain.valueObject.resource.ResourceType;
 
@@ -120,7 +121,9 @@ class BuildingTest {
 		Building building = new Building(type, 1);
 
 		building.addInhabitantToBuilding(5);
+		Resource R2 = new Resource(ResourceType.FOOD, new ResourceAmount(5));
 		assertEquals(5, building.getInhabitants());
+		assertTrue((building.getFoodConsumption()).equals(R2));
 	}
 
 	@Test
@@ -159,11 +162,11 @@ class BuildingTest {
 
 		ConstructionNeeds iCNeeds = building.getInitConstructionNeeds();
 
-		ConstructionNeeds cNeeds = building.getConstructionNeeds();
+		ConstructionNeeds cNeeds = building.getConstructionNeeds(); // for next upgrade
 		assertFalse(iCNeeds.equals(cNeeds));
 	}
 
-	@Disabled
+	//@Disabled
 	@Test
 	void testCanUpgrade() {
 		// fails for now
@@ -177,10 +180,12 @@ class BuildingTest {
 
 		building.canUpgrade(inventory);
 
-		//Building building2 = new Building(type, 1);
+		Building building2 = new Building(type, 1);
 
-		//assertTrue(building.type.getLevel() == 2);
-		//assertTrue(building2.type.getLevel() == 1);
+		
+
+		assertTrue(building.getLevel() == 2);
+		assertTrue(building2.getLevel() == 1);
 	}
 
 	@Test
